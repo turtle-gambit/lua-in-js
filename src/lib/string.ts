@@ -1,7 +1,7 @@
-import printj from 'printj'
-import { Table } from '../Table'
-import { LuaError } from '../LuaError'
-import { tostring, posrelat, coerceArgToNumber, coerceArgToString, hasOwnProperty, LuaType } from '../utils'
+import printj from 'https://esm.sh/printj'
+import { Table } from '../Table.ts'
+import { LuaError } from '../LuaError.ts'
+import { tostring, posrelat, coerceArgToNumber, coerceArgToString, hasOwnProperty, LuaType } from '../utils.ts'
 
 const ROSETTA_STONE: Record<string, string> = {
     '([^a-zA-Z0-9%(])-': '$1*?',

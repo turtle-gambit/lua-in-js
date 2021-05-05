@@ -1,4 +1,4 @@
-import luaparse from 'luaparse'
+import luaparse from 'https://esm.sh/luaparse'
 
 type Block =
     | luaparse.IfClause
@@ -330,10 +330,10 @@ const generate = (node: luaparse.Node): string | MemExpr => {
                     : expression(node.type === 'TableCallExpression' ? node.arguments : node.argument)
 
             if (functionName instanceof MemExpr && node.base.type === 'MemberExpression' && node.base.indexer === ':') {
-                return `__lua.call(${functionName}, ${functionName.base}, ${args})`
+                return `await __lua.call(${functionName}, ${functionName.base}, ${args})`
             }
 
-            return `__lua.call(${functionName}, ${args})`
+            return `await __lua.call(${functionName}, ${args})`
         }
 
         default:
@@ -531,7 +531,7 @@ const checkGoto = (ast: luaparse.Chunk): void => {
         gotoScopeMap.set(gotoScope, parent)
     }
     function destroyGotoScope(): void {
-        gotoScope = gotoScopeMap.get(gotoScope)
+        gotoScope = gotoScopeMap.get(gotoScope) ?? 0
     }
 
     for (let i = 0; i < gotoInfo.length; i++) {
@@ -573,9 +573,9 @@ const visitNode = (
 
         const S = partOfBlock === false && isNewScope ? scopeToParentScope.get(nextScope) : nextScope
         if (Array.isArray(node)) {
-            node.forEach(n => visitProp(n, S, nextGoto))
+            node.forEach(n => visitProp(n, S!!, nextGoto))
         } else {
-            visitProp(node, S, nextGoto)
+            visitProp(node, S!!, nextGoto)
         }
     }
 
@@ -594,7 +594,7 @@ const visitNode = (
             VP(node.right)
             break
         case 'FunctionDeclaration':
-            VP(node.identifier, false)
+            VP(node.identifier!!, false)
             VP(node.parameters)
             VP(node.body)
             break
@@ -620,7 +620,7 @@ const visitNode = (
             VP(node.variable)
             VP(node.start, false)
             VP(node.end, false)
-            VP(node.step, false)
+            VP(node.step!!, false)
             VP(node.body)
             break
         case 'ReturnStatement':

@@ -1,4 +1,4 @@
-import { Table } from '../Table'
+import { Table } from '../Table.ts'
 import {
     LuaType,
     coerceToBoolean,
@@ -6,8 +6,8 @@ import {
     coerceArgToString,
     coerceArgToTable,
     coerceArgToFunction
-} from '../utils'
-import { LuaError } from '../LuaError'
+} from '../utils.ts'
+import { LuaError } from '../LuaError.ts'
 
 function getn(table: LuaType): number {
     const TABLE = coerceArgToTable(table, 'getn', 1)

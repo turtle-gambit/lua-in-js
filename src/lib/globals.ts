@@ -1,6 +1,6 @@
-import { parse } from '../parser'
-import { Table } from '../Table'
-import { LuaError } from '../LuaError'
+import { parse } from '../parser.ts'
+import { Table } from '../Table.ts'
+import { LuaError } from '../LuaError.ts'
 import {
     LuaType,
     Config,
@@ -14,8 +14,8 @@ import {
     coerceArgToString,
     coerceArgToTable,
     hasOwnProperty
-} from '../utils'
-import { metatable as stringMetatable } from './string'
+} from '../utils.ts'
+import { metatable as stringMetatable } from './string.ts'
 
 const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -27,7 +27,7 @@ function ipairsIterator(table: Table, index: number): LuaType[] {
     const nextIndex = index + 1
     const numValues = table.numValues
 
-    if (!numValues[nextIndex] || numValues[nextIndex] === undefined) return undefined
+    if (!numValues[nextIndex] || numValues[nextIndex] === undefined) return []
     return [nextIndex, numValues[nextIndex]]
 }
 
@@ -63,6 +63,7 @@ function getmetatable(table: LuaType): Table {
     if (typeof table === 'string') {
         return stringMetatable
     }
+	throw "nope";
 }
 
 /**
@@ -142,6 +143,7 @@ function next(table: LuaType, index?: LuaType): [number | string, LuaType] {
             }
         }
     }
+	throw "nope"
 }
 
 /**
@@ -275,7 +277,7 @@ function setmetatable(table: LuaType, metatable: LuaType): Table {
  * 'B' represents 11, and so forth, with 'Z' representing 35.
  * If the string e is not a valid numeral in the given base, the function returns nil.
  */
-function tonumber(e: LuaType, base: LuaType): number {
+function tonumber(e: LuaType, base: LuaType): number | undefined{
     const E = coerceToString(e).trim()
     const BASE = base === undefined ? 10 : coerceArgToNumber(base, 'tonumber', 2)
 
@@ -314,7 +316,7 @@ function xpcall(f: LuaType, msgh: LuaType, ...args: LuaType[]): [false, string] 
 function createG(cfg: Config, execChunk: (_G: Table, chunk: string) => LuaType[]): Table {
     function print(...args: LuaType[]): void {
         const output = args.map(arg => tostring(arg)).join('\t')
-        cfg.stdout(output)
+        cfg.stdout && cfg.stdout(output)
     }
 
     function load(
@@ -360,7 +362,7 @@ function createG(cfg: Config, execChunk: (_G: Table, chunk: string) => LuaType[]
         mode?: 'b' | 't' | 'bt',
         env?: Table
     ): [undefined, string] | (() => LuaType[]) {
-        const FILENAME = filename === undefined ? cfg.stdin : coerceArgToString(filename, 'loadfile', 1)
+        const FILENAME = filename === undefined ? (cfg.stdin ?? "") : coerceArgToString(filename, 'loadfile', 1)
 
         if (!cfg.fileExists) {
             throw new LuaError('loadfile requires the config.fileExists function')

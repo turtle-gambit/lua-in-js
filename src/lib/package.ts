@@ -1,6 +1,6 @@
-import { Table } from '../Table'
-import { LuaType, Config, coerceArgToString } from '../utils'
-import { LuaError } from '../LuaError'
+import { Table } from '../Table.ts'
+import { LuaType, Config, coerceArgToString } from '../utils.ts'
+import { LuaError } from '../LuaError.ts'
 
 const getLibPackage = (
     execModule: (content: string, moduleName: string) => LuaType,

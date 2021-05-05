@@ -1,6 +1,6 @@
-import { MetaMethods, Table } from './Table'
-import { coerceToNumber, coerceToString, LuaType, coerceToBoolean } from './utils'
-import { LuaError } from './LuaError'
+import { MetaMethods, Table } from './Table.ts'
+import { coerceToNumber, coerceToString, LuaType, coerceToBoolean } from './utils.ts'
+import { LuaError } from './LuaError.ts'
 
 const binaryArithmetic = <R extends boolean | number>(
     left: LuaType,
@@ -146,9 +146,9 @@ const eq = (left: LuaType, right: LuaType): boolean => {
     return left === right
 }
 
-const lt = (left: LuaType, right: LuaType): boolean => binaryBooleanArithmetic(left, right, '__lt', (l, r) => l < r)
+const lt = (left: LuaType, right: LuaType): boolean => binaryBooleanArithmetic(left, right, '__lt', (l, r) => (l as any as number) < (r as any as number))
 
-const le = (left: LuaType, right: LuaType): boolean => binaryBooleanArithmetic(left, right, '__le', (l, r) => l <= r)
+const le = (left: LuaType, right: LuaType): boolean => binaryBooleanArithmetic(left, right, '__le', (l, r) => (l as any as number) <= (r as any as number))
 
 const gt = (left: LuaType, right: LuaType): boolean => !le(left, right)
 

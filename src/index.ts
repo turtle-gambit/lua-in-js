@@ -1,27 +1,27 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
-import { Scope } from './Scope'
-import { createG } from './lib/globals'
-import { operators } from './operators'
-import { Table } from './Table'
-import { LuaError } from './LuaError'
-import { libMath } from './lib/math'
-import { libTable } from './lib/table'
-import { libString, metatable as stringMetatable } from './lib/string'
-import { getLibOS } from './lib/os'
-import { getLibPackage } from './lib/package'
-import { LuaType, ensureArray, Config } from './utils'
-import { parse as parseScript } from './parser'
+import { Scope } from './Scope.ts'
+import { createG } from './lib/globals.ts'
+import { operators } from './operators.ts'
+import { Table } from './Table.ts'
+import { LuaError } from './LuaError.ts'
+import { libMath } from './lib/math.ts'
+import { libTable } from './lib/table.ts'
+import { libString, metatable as stringMetatable } from './lib/string.ts'
+import { getLibOS } from './lib/os.ts'
+import { getLibPackage } from './lib/package.ts'
+import { LuaType, ensureArray, Config } from './utils.ts'
+import { parse as parseScript } from './parser.ts'
 
 interface Script {
     exec: () => LuaType
 }
 
-const call = (f: Function | Table, ...args: LuaType[]): LuaType[] => {
-    if (f instanceof Function) return ensureArray(f(...args))
+const call = async (f: Function | Table, ...args: LuaType[]): Promise<LuaType[]> => {
+    if (f instanceof Function) return ensureArray(await Promise.resolve(f(...args)))
 
     const mm = f instanceof Table && f.getMetaMethod('__call')
-    if (mm) return ensureArray(mm(f, ...args))
+    if (mm) return ensureArray(await Promise.resolve(mm(f, ...args)))
 
     throw new LuaError(`attempt to call an uncallable type`)
 }
@@ -37,7 +37,7 @@ const get = (t: Table | string, v: LuaType): LuaType => {
 }
 
 const execChunk = (_G: Table, chunk: string, chunkName?: string): LuaType[] => {
-    const exec = new Function('__lua', chunk)
+    const exec = new Function('__lua', 'return (async () => {' + chunk + '})();')
     const globalScope = new Scope(_G.strValues).extend()
     if (chunkName) globalScope.setVarargs([chunkName])
     const res = exec({
@@ -110,5 +110,5 @@ function createEnv(
 }
 
 // eslint-disable-next-line import/first
-import * as utils from './utils'
+import * as utils from './utils.ts'
 export { createEnv, Table, LuaError, utils }

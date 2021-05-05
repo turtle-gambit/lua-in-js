@@ -1,4 +1,4 @@
-import { hasOwnProperty, LuaType, tostring } from './utils'
+import { hasOwnProperty, LuaType, tostring } from './utils.ts'
 
 type MetaMethods =
     // unary op
@@ -95,7 +95,7 @@ class Table {
     }
 
     public getMetaMethod(name: MetaMethods): Function {
-        return this.metatable && (this.metatable.rawget(name) as Function)
+        return (this.metatable && (this.metatable.rawget(name) as Function))!!
     }
 
     public set(key: LuaType, value: LuaType): LuaType {

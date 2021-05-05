@@ -1,6 +1,6 @@
-import { Table } from '../Table'
-import { LuaType, Config, coerceArgToNumber } from '../utils'
-import { LuaError } from '../LuaError'
+import { Table } from '../Table.ts'
+import { LuaType, Config, coerceArgToNumber } from '../utils.ts'
+import { LuaError } from '../LuaError.ts'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const MONTHS = [

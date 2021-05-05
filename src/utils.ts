@@ -1,5 +1,5 @@
-import { LuaError } from './LuaError'
-import { Table } from './Table'
+import { LuaError } from './LuaError.ts'
+import { Table } from './Table.ts'
 
 type LuaType = undefined | boolean | number | string | Function | Table // thread | userdata
 
@@ -34,7 +34,8 @@ function type(v: LuaType): 'string' | 'number' | 'boolean' | 'function' | 'nil' 
         case 'object':
             if (v instanceof Table) return 'table'
             if (v instanceof Function) return 'function'
-    }
+    };
+	return 'table';
 }
 
 function tostring(v: LuaType): string {
@@ -52,11 +53,11 @@ function tostring(v: LuaType): string {
     return coerceToString(v)
 
     function valToStr(v: LuaType, prefix: string): string {
-        const s = v.toString()
+        const s = v === undefined ? "undefined" : v.toString()
         if (s.indexOf(prefix) > -1) return s
 
         const str = prefix + Math.floor(Math.random() * 0xffffffff).toString(16)
-        v.toString = () => str
+        if(v !== undefined)v.toString = () => str
         return str
     }
 }
@@ -99,7 +100,7 @@ function coerceToNumber(val: LuaType, errorMessage?: string): number {
 
     switch (val) {
         case undefined:
-            return undefined
+            return NaN
         case 'inf':
             return Infinity
         case '-inf':
@@ -122,8 +123,9 @@ function coerceToNumber(val: LuaType, errorMessage?: string): number {
         return n
     }
 
-    if (errorMessage === undefined) return undefined
+    if (errorMessage === undefined) return 0
     throwCoerceError(val, errorMessage)
+	return 0
 }
 
 /**
@@ -155,6 +157,7 @@ function coerceToString(val: LuaType, errorMessage?: string): string {
 
     if (errorMessage === undefined) return 'nil'
     throwCoerceError(val, errorMessage)
+	return ""
 }
 
 function coerceArg<T>(
@@ -167,7 +170,7 @@ function coerceArg<T>(
     return coerceFunc(value, `bad argument #${index} to '${funcName}' (${typ} expected, got %type)`)
 }
 
-function coerceArgToNumber(value: LuaType, funcName: string, index: number): number {
+function coerceArgToNumber(value: LuaType, funcName: string, index: number): number | undefined{
     return coerceArg<number>(value, coerceToNumber, 'number', funcName, index)
 }
 

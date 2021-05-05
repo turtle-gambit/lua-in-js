@@ -1,5 +1,5 @@
-import { Table } from '../Table'
-import { coerceArgToNumber, LuaType, coerceToNumber } from '../utils'
+import { Table } from '../Table.ts'
+import { coerceArgToNumber, LuaType, coerceToNumber } from '../utils.ts'
 
 const maxinteger = Number.MAX_SAFE_INTEGER
 const mininteger = Number.MIN_SAFE_INTEGER

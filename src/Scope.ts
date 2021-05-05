@@ -1,4 +1,4 @@
-import { hasOwnProperty, LuaType } from './utils'
+import { hasOwnProperty, LuaType } from './utils.ts'
 
 export class Scope {
     private parent: Scope
